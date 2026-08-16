@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중2 과학 7단원 - 전기와 자기 인터랙티브 탐구 포털</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+            background-color: #0b0e14;
+            color: #e2e8f0;
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+        header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 35px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .header-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            color: #0f172a;
+            font-size: 0.85rem;
+            font-weight: 800;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #f8fafc;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* Container & Filter Bar */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding: 0 20px;
+        }
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .filter-btn:hover {
+            background: #334155;
+            color: #fff;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #0284c7, #6366f1);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
+
+        /* Lesson Grid */
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 22px;
+        }
+        .lesson-card {
+            background: rgba(22, 27, 38, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .lesson-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(56, 189, 248, 0.15);
+        }
+        .lesson-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Card Contents */
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .lesson-badge {
+            background: #182238;
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+        .lesson-icon {
+            font-size: 2rem;
+        }
+        .lesson-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #f8fafc;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .lesson-desc {
+            font-size: 0.88rem;
+            color: #94a3b8;
+            margin-bottom: 18px;
+            line-height: 1.55;
+            flex-grow: 1;
+        }
+        .feature-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .tag {
+            background: #0f172a;
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #334155;
+        }
+
+        /* Launch Button */
+        .launch-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            background: linear-gradient(135deg, #0284c7, #6366f1);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 0;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            transition: all 0.2s ease;
+        }
+        .launch-btn:hover {
+            opacity: 0.92;
+            transform: scale(1.02);
+            box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+        }
+
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <span class="header-tag">중학교 2학년 과학 디지털 교과과정</span>
+        <h1>⚡ 7단원. 전기와 자기 탐구 프로그램 포털</h1>
+        <p class="subtitle">개념 정리, 실시간 2D/3D 인터랙티브 시뮬레이션 및 형성평가 통합 플랫폼</p>
+    </header>
+
+    <div class="container">
+        <!-- 카테고리 필터 바 -->
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterLessons('all')">전체 차시 보기 (1~8차시)</button>
+            <button class="filter-btn" onclick="filterLessons('elec')">전기 파트 (1~6차시)</button>
+            <button class="filter-btn" onclick="filterLessons('mag')">자기 파트 (7~8차시)</button>
+        </div>
+
+        <!-- 8개 차시 카드 그리드 -->
+        <div class="lesson-grid" id="lessonGrid">
+
+            <!-- 1차시 -->
+            <div class="lesson-card" data-category="elec">
+                <div>
+                    <div class="card-header">
+                        <span class="lesson-badge">1차시</span>
+                        <div class="lesson-icon">⚡</div>
+                    </div>
+                    <h2 class="lesson-title">마찰전기와 전기력</h2>
+                    <p class="lesson-desc">원자 구조 시각화부터 털가죽 문지르기를 통한 전자 이동 관찰 및 대전체 간 인력·척력 시뮬레이션을 탐구합니다.</p>
+                    <div class="feature-tags">
+                        <span class="tag">원자 모형</span>
+                        <span class="tag">마찰 대전</span>
+                        <span class="tag">인력·척력</span>
+                        <span class="tag">초성 퀴즈</span>
+                    </div>
+                </div>
+                <a href="01_friction_static.html" class="launch-btn">학습 시작하기 ➔</a>
+            </div>
+
+            <!-- 2차시 -->
+            <div class="lesson-card" data-category="elec">
+                <div>
+                    <div class="card-header">
+                        <span class="lesson-badge">2차시</span>
+                        <div class="lesson-icon">🧲</div>
+                    </div>
+                    <h2 class="lesson-title">정전기 유도 & 전기력</h2>
+                    <p class="lesson-desc">금속 내부 '전자의 바다' 자유 전자 이동과 대전체 접근 시 인력에 의해 물체가 달라붙는 메커니즘을 학습합니다.</p>
+                    <div class="feature-tags">
+                        <span class="tag">자유 전자</span>
+                        <span class="tag">정전기 유도</span>
+                        <span class="tag">자동 부착</span>
+                        <span class="tag">내장 미니실험</span>
+                    </div>
+                </div>
+                <a href="02_electrostatic_induction.html" class="launch-btn">학습 시작하기 ➔</a>
+            </div>
+
+            <!-- 3차시 -->
+            <div class="lesson-card" data-category="elec">
+                <div>
+                    <div class="card-header">
+                        <span class="lesson-badge">3차시</span>
+                        <div class="lesson-icon">💡</div>
+                    </div>
+                    <h2 class="lesson-title">전류와 전압 직관적 탐구</h2>
+                    <p class="lesson-desc">수류 모형(물/펌프/물레방아) 비유와 스위치 ON/OFF에 따른 회로 내 실제 전자들의 이동 방향을 관찰합니다.</p>
+                    <div class="feature-tags">
+                        <span class="tag">수류 모형</span>
+                        <span class="tag">회로 스위치</span>
+                        <span class="tag">전자 이동 방향</span>
+                        <span class="tag">형성평가</span>
+                    </div>
+                </div>
+                <a href="03_current_voltage.html" class="launch-btn">학습 시작하기 ➔</a>
+            </div>
+
+            <!-- 4차시 -->
+            <div class="lesson-card" data-category="elec">
+                <div>
+                    <div class="card-header">
+                        <span class="lesson-badge">4차시</span>
+                        <div class="lesson-icon">📊</div>
+                    </div>
+                    <h2 class="lesson-title">전류·전압·저항과 옴의 법칙</h2>
+                    <p class="lesson-desc">도선의 굵기·길이에 따른 전자 충돌 저항 변화와 실시간 전류계 및 V-I, R-I 그래프를 직접 분석합니다.</p>
+                    <div class="feature-tags">
+                        <span class="tag">옴의 법칙 (V=IR)</span>
+                        <span class="tag">도선 저항</span>
+                        <span class="tag">실시간 그래프</span>
+                        <span class="tag">계산 문제</span>
+                    </div>
+                </div>
+                <a href="04_ohms_law.html" class="launch-btn">학습 시작하기 ➔</a>
+            </div>
+
+            <!-- 5차시 -->
+            <div class="lesson-card" data-category="elec">
+                <div>
+                    <div class="card-header">
+                        <span class="lesson-badge">5차시</span>
+                        <div class="lesson-icon">🔌</div>
+                    </div>
+                    <h2 class="lesson-title">저항의 직렬연결과 병렬연결</h2>
+                    <p class="lesson-desc">직렬/병렬 연결 방식에 따른 전구 밝기 차이(25% vs 100%)와 3구 멀티탭 내부 병렬 배선 분해 시뮬레이션을 체험합니다.</p>
+                    <div class="feature-tags">
+                        <span class="tag">직렬 vs 병렬</span>
+                        <span class="tag">소비 전력</span>
+                        <span class="tag">멀티탭 구조</span>
+                        <span class="tag">전기 회로도</span>
+                    </div>
+                </div>
+                <a href="05_circuit_connection.html" class="launch-btn">학습 시작하기 ➔</a>
+            </div>
+
+            <!-- 6차시 -->
+            <div class="lesson-card" data-category="elec">
+                <div>
+                    <div class="card-header">
+                        <span class="lesson-badge">6차시</span>
+                        <div class="lesson-icon">🌱</div>
+                    </div>
+                    <h2 class="lesson-title">전기 에너지 전환과 효율</h2>
+                    <p class="lesson-desc">가전제품 에너지 전환 탐구, LED vs 백열등 효율 비교, 대기전력 판별 버튼 및 주택용 전기요금 누진제를 시뮬레이션합니다.</p>
+                    <div class="feature-tags">
+                        <span class="tag">에너지 전환</span>
+                        <span class="tag">소비 효율 등급</span>
+                        <span class="tag">대기 전력 마크</span>
+                        <span class="tag">누진 요금제</span>
+                    </div>
+                </div>
+                <a href="06_energy_conversion.html" class="launch-btn">학습 시작하기 ➔</a>
+            </div>
+
+            <!-- 7차시 -->
+            <div class="lesson-card" data-category="mag">
+                <div>
+                    <div class="card-header">
+                        <span class="lesson-badge">7차시</span>
+                        <div class="lesson-icon">🧭</div>
+                    </div>
+                    <h2 class="lesson-title">전류가 만드는 자기장 (3D)</h2>
+                    <p class="lesson-desc">360° 상하/좌우 시야 회전을 통해 3D 직선 도선 및 솔레노이드(전자석) 주위의 나침반 배열과 자기력선을 입체 관찰합니다.</p>
+                    <div class="feature-tags">
+                        <span class="tag">3D 시야 조절</span>
+                        <span class="tag">직선 도선</span>
+                        <span class="tag">솔레노이드 코일</span>
+                        <span class="tag">오른손 법칙</span>
+                    </div>
+                </div>
+                <a href="07_magnetic_field_3d.html" class="launch-btn">학습 시작하기 ➔</a>
+            </div>
+
+            <!-- 8차시 -->
+            <div class="lesson-card" data-category="mag">
+                <div>
+                    <div class="card-header">
+                        <span class="lesson-badge">8차시</span>
+                        <div class="lesson-icon">🌀</div>
+                    </div>
+                    <h2 class="lesson-title">자기장 속 힘과 전동기 (3D)</h2>
+                    <p class="lesson-desc">말굽자석 속 3D 전기 그네의 자기력과 직류 전동기(모터)의 건전지 폐회로 및 정류자의 전류 반전 매커니즘을 탐구합니다.</p>
+                    <div class="feature-tags">
+                        <span class="tag">3D 전기 그네</span>
+                        <span class="tag">직류 전동기 (모터)</span>
+                        <span class="tag">정류자 원리</span>
+                        <span class="tag">오른손 손바닥</span>
+                    </div>
+                </div>
+                <a href="08_motor_force_3d.html" class="launch-btn">학습 시작하기 ➔</a>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>© 중학교 2학년 과학 - 7. 전기와 자기 인터랙티브 탐구 프로그램 모음</p>
+    </footer>
+
+    <script>
+        // 카테고리 필터링 기능
+        function filterLessons(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const cards = document.querySelectorAll('.lesson-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
