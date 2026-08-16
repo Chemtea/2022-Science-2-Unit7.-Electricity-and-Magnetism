@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중2 과학 디지털 탐구 플랫폼</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+            background-color: #0b0e14;
+            color: #e2e8f0;
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+        header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .header-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            color: #0f172a;
+            font-size: 0.82rem;
+            font-weight: 800;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 1.9rem;
+            color: #f8fafc;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* 관리자 모드 알림 배너 */
+        .admin-banner {
+            display: none;
+            background: linear-gradient(135deg, #ef4444, #f59e0b);
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+            position: sticky;
+            top: 0;
+            z-index: 101;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+        .admin-banner button {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-left: 15px;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding: 0 20px;
+        }
+
+        .hub-title-box {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .hub-title-box h2 {
+            font-size: 1.4rem;
+            color: #f8fafc;
+            margin-bottom: 6px;
+        }
+        .hub-title-box p {
+            color: #94a3b8;
+            font-size: 0.92rem;
+        }
+
+        .unit-select-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 15px;
+        }
+
+        .unit-entry-card {
+            background: rgba(22, 27, 38, 0.9);
+            border-radius: 20px;
+            padding: 30px 26px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 280px;
+        }
+
+        .unit-entry-card.theme-unit3 {
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.08);
+        }
+        .unit-entry-card.theme-unit3::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 6px;
+            background: linear-gradient(90deg, #f59e0b, #ec4899);
+        }
+        .unit-entry-card.theme-unit7 {
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.08);
+        }
+        .unit-entry-card.theme-unit7::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 6px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+        }
+
+        .unit-entry-card.is-locked {
+            filter: grayscale(0.8);
+            opacity: 0.7;
+            border-color: #475569 !important;
+        }
+        .unit-entry-card.is-locked::before {
+            background: #64748b !important;
+        }
+
+        .unit-entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .unit-entry-badge {
+            font-size: 0.82rem;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+        .badge-theme-unit3 {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+        .badge-theme-unit7 {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+        }
+        .badge-locked {
+            background: rgba(239, 68, 68, 0.2) !important;
+            color: #f87171 !important;
+            border: 1px solid #ef4444 !important;
+        }
+        .unit-entry-icon { font-size: 2.5rem; }
+        .unit-entry-title {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #f8fafc;
+            margin-bottom: 10px;
+        }
+        .unit-entry-desc {
+            font-size: 0.92rem;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .unit-entry-btn {
+            width: 100%;
+            padding: 13px 0;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .theme-unit3 .unit-entry-btn { background: linear-gradient(135deg, #d97706, #db2777); }
+        .theme-unit7 .unit-entry-btn { background: linear-gradient(135deg, #0284c7, #6366f1); }
+        .unit-entry-card.is-locked .unit-entry-btn {
+            background: #334155 !important;
+            color: #94a3b8 !important;
+        }
+
+        /* 2단계 화면: 차시별 학습관 */
+        .lesson-view-container {
+            display: none;
+            animation: fadeIn 0.35s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .unit-navigation-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 22px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            background: #182238;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .back-hub-btn {
+            background: #1e293b;
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+        }
+        .back-hub-btn:hover { background: #334155; color: #fff; }
+
+        .unit-status-text {
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+        .status-unit3 { color: #f59e0b; }
+        .status-unit7 { color: #38bdf8; }
+
+        .unit-banner {
+            padding: 20px 24px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            background: rgba(22, 27, 38, 0.7);
+            border-left: 4px solid #38bdf8;
+        }
+        .unit-banner.banner-unit3 { border-left-color: #f59e0b; }
+
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 22px;
+        }
+        .lesson-card {
+            background: rgba(22, 27, 38, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .lesson-card.unit-3-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #f59e0b, #ec4899);
+        }
+        .lesson-card.unit-7-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+        }
+        .lesson-card.is-locked {
+            opacity: 0.7;
+            background: rgba(15, 23, 42, 0.85);
+            border-color: #334155 !important;
+        }
+        .lesson-card.is-locked::before { background: #64748b !important; }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .card-badge {
+            font-size: 0.76rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+        .badge-unit3 { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .badge-unit7 { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+
+        .lesson-icon { font-size: 2rem; }
+        .lesson-title { font-size: 1.18rem; font-weight: 800; color: #f8fafc; margin-bottom: 8px; }
+        .lesson-desc { font-size: 0.88rem; color: #94a3b8; margin-bottom: 18px; line-height: 1.55; flex-grow: 1; }
+
+        .feature-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .tag {
+            background: #0f172a;
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #334155;
+        }
+
+        .launch-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 0;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-unit3 { background: linear-gradient(135deg, #d97706, #db2777); }
+        .btn-unit7 { background: linear-gradient(135deg, #0284c7, #6366f1); }
+        .btn-locked { background: #334155 !important; color: #94a3b8 !important; }
+
+        /* 원터치 관리자 토글 바 */
+        .admin-toggle-bar {
+            display: none;
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.2);
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-toggle-btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.82rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+        .toggle-unlock-btn { background: #059669; color: #fff; }
+        .toggle-lock-btn { background: #dc2626; color: #fff; }
+
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 25px;
+        }
+        .admin-login-btn {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #64748b;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+        .admin-login-btn:hover {
+            color: #38bdf8;
+            border-color: #38bdf8;
+        }
+
+        /* 비밀번호 입력 모달 스타일 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-box {
+            background: #182238;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-box h3 {
+            color: #f8fafc;
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .modal-box p {
+            color: #94a3b8;
+            font-size: 0.88rem;
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+        .pw-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .pw-input-wrapper input {
+            width: 100%;
+            padding: 10px 42px 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+        .pw-input-wrapper input:focus {
+            border-color: #38bdf8;
+        }
+        .pw-toggle-btn {
+            position: absolute;
+            right: 8px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pw-toggle-btn:hover {
+            color: #38bdf8;
+        }
+        .modal-btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-btn-group button {
+            flex: 1;
+            padding: 10px 0;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+        .modal-btn-confirm {
+            background: linear-gradient(135deg, #0284c7, #6366f1);
+            color: #fff;
+        }
+        .modal-btn-cancel {
+            background: #334155;
+            color: #cbd5e1;
+        }
+        .modal-btn-group button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 관리자 모드 활성화 배너 -->
+    <div id="adminModeBanner" class="admin-banner">
+        <span>🛠️ <b>교사용 관리자 모드 실행 중</b> — 각 카드의 [잠금/해제] 버튼을 원터치로 눌러 관리하세요!</span>
+        <button onclick="toggleAdminMode(false)">관리자 모드 종료</button>
+    </div>
+
+    <header>
+        <span class="header-tag">중학교 2학년 과학 디지털 탐구 플랫폼</span>
+        <h1 id="headerMainTitle">🔬 중2 과학 디지털 탐구 포털</h1>
+        <p class="subtitle" id="headerSubTitle">학습할 단원을 선택하면 해당 단원의 탐구 활동들만 집중해서 학습할 수 있습니다.</p>
+    </header>
+
+    <div class="container">
+
+        <!-- [1단계 화면: 대단원 선택 허브] -->
+        <div id="unitHubView">
+            <div class="hub-title-box">
+                <h2>학습할 단원을 선택하세요</h2>
+                <p>단원에 입장하면 각 차시별 가상 실험실 및 실시간 형성평가를 이용할 수 있습니다.</p>
+            </div>
+            <div class="unit-select-grid" id="unitEntryGrid"></div>
+        </div>
+
+        <!-- [2단계 화면: 선택된 단원 전용 학습관] -->
+        <div id="lessonView" class="lesson-view-container">
+            <div class="unit-navigation-bar" id="unitNavBar">
+                <button class="back-hub-btn" onclick="backToHub()">⬅️ 전체 단원 선택으로 돌아가기</button>
+                <div class="unit-status-text" id="unitStatusText"></div>
+            </div>
+
+            <div class="unit-banner" id="unitBannerBox">
+                <h3 id="unitBannerTitle"></h3>
+                <p id="unitBannerDesc"></p>
+            </div>
+
+            <div class="lesson-grid" id="lessonCardContainer"></div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>© 중학교 2학년 과학 디지털 시뮬레이션 학습관</p>
+        <p>제작자: 대구광역시교육청 과학교사 김성현</p>
+        <button class="admin-login-btn" id="adminToggleFooterBtn" onclick="requestAdminAuth()">⚙️ 교사용 관리자 모드</button>
+    </footer>
+
+    <!-- 비밀번호 마스킹 & 보기 토글 모달 -->
+    <div id="passwordModal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modalTitle">🔑 관리자 비밀번호 인증</h3>
+            <p id="modalDesc">관리자 비밀번호를 입력해주세요.</p>
+            
+            <div class="pw-input-wrapper">
+                <input type="password" id="modalPwInput" placeholder="비밀번호 입력" autocomplete="off">
+                <button type="button" class="pw-toggle-btn" id="pwToggleBtn" onclick="togglePasswordVisibility()" title="비밀번호 표시/숨김">👁️</button>
+            </div>
+
+            <div class="modal-btn-group">
+                <button type="button" class="modal-btn-cancel" onclick="closeAuthModal()">취소</button>
+                <button type="button" class="modal-btn-confirm" onclick="submitAuthModal()">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzt79aRnksXzvk1vTohMMLISbuDMVLpsdBTolC68Nrl_LJC1boxggJclPz87zkjsqTf/exec";
+        
+        let isAdminMode = false;
+        let currentUnitKey = null;
+        let adminKey = ""; // 관리자 인증 후 메모리에만 보관(HTML 소스에는 비밀번호를 저장하지 않음)
+
+        const defaultCurriculum = {
+            unit3: {
+                id: "unit3",
+                title: "3단원. 빛과 파동",
+                icon: "🌟",
+                isLocked: false,
+                themeClass: "theme-unit3",
+                barThemeClass: "bar-unit3",
+                statusClass: "status-unit3",
+                bannerClass: "banner-unit3",
+                badgeClass: "badge-unit3",
+                cardClass: "unit-3-card",
+                btnClass: "btn-unit3",
+                desc: "빛의 성질(반사, 굴절, 합성)과 파동의 전달 및 소리의 특성을 탐구하는 단원입니다.",
+                lessons: [
+                    {
+                        id: "u3_l1",
+                        chasi: "1차시",
+                        title: "빛의 반사와 거울",
+                        desc: "레이저 각도기를 활용한 입사각·반사각 측정, 정반사 vs 난반사 표면 비교, 평면거울 상 작도를 탐구합니다.",
+                        file: "01_light_reflection.html",
+                        isLocked: false,
+                        tags: ["반사 법칙", "정반사·난반사", "평면거울 상 작도"]
+                    }
+                ]
+            },
+            unit7: {
+                id: "unit7",
+                title: "7단원. 전기와 자기",
+                icon: "⚡",
+                isLocked: false,
+                themeClass: "theme-unit7",
+                barThemeClass: "bar-unit7",
+                statusClass: "status-unit7",
+                bannerClass: "",
+                badgeClass: "badge-unit7",
+                cardClass: "unit-7-card",
+                btnClass: "btn-unit7",
+                desc: "전하의 이동으로 일어나는 전기 현상과 전류에 의해 생성되는 자기장 및 전동기의 원리를 탐구하는 단원입니다.",
+                lessons: [
+                    {
+                        id: "u7_l1",
+                        chasi: "1차시",
+                        title: "마찰전기와 전기력",
+                        desc: "원자 구조 시각화부터 털가죽 문지르기를 통한 전자 이동 관찰 및 대전체 간 인력·척력 시뮬레이션을 탐구합니다.",
+                        file: "01_friction_static.html",
+                        isLocked: false,
+                        tags: ["원자 모형", "마찰 대전", "인력·척력", "초성 퀴즈"]
+                    },
+                    {
+                        id: "u7_l2",
+                        chasi: "2차시",
+                        title: "정전기 유도 & 전기력",
+                        desc: "금속 내부 '전자의 바다' 자유 전자 이동과 대전체 접근 시 인력에 의해 물체가 달라붙는 메커니즘을 학습합니다.",
+                        file: "02_electrostatic_induction.html",
+                        isLocked: false,
+                        tags: ["자유 전자", "정전기 유도", "자동 부착", "미니 실험"]
+                    },
+                    {
+                        id: "u7_l3",
+                        chasi: "3차시",
+                        title: "전류와 전압 직관적 탐구",
+                        desc: "수류 모형(물/펌프/물레방아) 비유와 스위치 ON/OFF에 따른 회로 내 실제 전자들의 이동 방향을 관찰합니다.",
+                        file: "03_current_voltage.html",
+                        isLocked: false,
+                        tags: ["수류 모형", "회로 스위치", "전자 이동 방향", "형성평가"]
+                    },
+                    {
+                        id: "u7_l4",
+                        chasi: "4차시",
+                        title: "전류·전압·저항과 옴의 법칙",
+                        desc: "도선의 굵기·길이에 따른 전자 충돌 저항 변화와 실시간 전류계 및 V-I, R-I 그래프를 직접 분석합니다.",
+                        file: "04_ohms_law.html",
+                        isLocked: false,
+                        tags: ["옴의 법칙 (V=IR)", "도선 저항", "실시간 그래프", "계산 문제"]
+                    },
+                    {
+                        id: "u7_l5",
+                        chasi: "5차시",
+                        title: "저항의 직렬연결과 병렬연결",
+                        desc: "직렬/병렬 연결 방식에 따른 전구 밝기 차이(25% vs 100%)와 3구 멀티탭 내부 병렬 배선 분해 시뮬레이션을 체험합니다.",
+                        file: "05_circuit_connection.html",
+                        isLocked: false,
+                        tags: ["직렬 vs 병렬", "소비 전력", "멀티탭 구조", "전기 회로도"]
+                    },
+                    {
+                        id: "u7_l6",
+                        chasi: "6차시",
+                        title: "전기 에너지 전환과 효율",
+                        desc: "가전제품 에너지 전환 탐구, LED vs 백열등 효율 비교, 대기전력 판별 버튼 및 주택용 전기요금 누진제를 시뮬레이션합니다.",
+                        file: "06_energy_conversion.html",
+                        isLocked: false,
+                        tags: ["에너지 전환", "소비 효율 등급", "대기 전력 마크", "누진 요금제"]
+                    },
+                    {
+                        id: "u7_l7",
+                        chasi: "7차시",
+                        title: "전류가 만드는 자기장 (3D)",
+                        desc: "360° 상하/좌우 시야 회전을 통해 3D 직선 도선 및 솔레노이드(전자석) 주위의 나침반 배열과 자기력선을 입체 관찰합니다.",
+                        file: "07_magnetic_field_3d.html",
+                        isLocked: false,
+                        tags: ["3D 시야 조절", "직선 도선", "솔레노이드 코일", "오른손 법칙"]
+                    },
+                    {
+                        id: "u7_l8",
+                        chasi: "8차시",
+                        title: "자기장 속 힘과 전동기 (3D)",
+                        desc: "말굽자석 속 3D 전기 그네의 자기력과 직류 전동기(모터)의 건전지 폐회로 및 정류자의 전류 반전 매커니즘을 탐구합니다.",
+                        file: "08_motor_force_3d.html",
+                        isLocked: false,
+                        tags: ["3D 전기 그네", "직류 전동기 (모터)", "정류자 원리", "오른손 손바닥"]
+                    }
+                ]
+            }
+        };
+
+        // ===== 중앙 잠금 상태 관리 =====
+        // Apps Script의 Script Properties를 유일한 잠금 기준으로 사용합니다.
+        // 학생 기기의 localStorage는 잠금 판정에 사용하지 않습니다.
+
+        function setAllLocked() {
+            for (const uKey in defaultCurriculum) {
+                defaultCurriculum[uKey].isLocked = true;
+                defaultCurriculum[uKey].lessons.forEach(l => {
+                    l.isLocked = true;
+                });
+            }
+        }
+
+        function applyCloudLocks(data) {
+            if (!data || typeof data !== 'object') return false;
+
+            for (const uKey in defaultCurriculum) {
+                const cloudUnit = data[uKey];
+
+                // 서버에 해당 단원 정보가 없으면 기본값을 유지
+                if (!cloudUnit || typeof cloudUnit !== 'object') continue;
+
+                defaultCurriculum[uKey].isLocked = cloudUnit.isLocked === true;
+
+                if (cloudUnit.lessons && typeof cloudUnit.lessons === 'object') {
+                    defaultCurriculum[uKey].lessons.forEach(l => {
+                        if (Object.prototype.hasOwnProperty.call(cloudUnit.lessons, l.id)) {
+                            l.isLocked = cloudUnit.lessons[l.id] === true;
+                        }
+                    });
+                }
+            }
+
+            return true;
+        }
+
+        // JSONP로 중앙 잠금 상태 읽기
+        function loadLocksFromCloud(callback) {
+            const callbackName = 'lockCallback_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+            const script = document.createElement('script');
+            let finished = false;
+
+            const cleanup = () => {
+                if (finished) return;
+                finished = true;
+                try { delete window[callbackName]; } catch (e) {}
+                script.remove();
+            };
+
+            const timer = setTimeout(() => {
+                if (finished) return;
+
+                // 잠금 서버에 연결되지 않으면 학생에게는 안전하게 전체 잠금 처리
+                if (!isAdminMode) {
+                    setAllLocked();
+                }
+
+                cleanup();
+                if (callback) callback(false);
+            }, 8000);
+
+            window[callbackName] = function(data) {
+                clearTimeout(timer);
+                const ok = applyCloudLocks(data);
+                cleanup();
+                if (callback) callback(ok);
+            };
+
+            script.onerror = function() {
+                clearTimeout(timer);
+
+                if (!isAdminMode) {
+                    setAllLocked();
+                }
+
+                cleanup();
+                if (callback) callback(false);
+            };
+
+            script.src =
+                `${GOOGLE_SCRIPT_URL}?action=get_locks&callback=${encodeURIComponent(callbackName)}&_=${Date.now()}`;
+
+            document.body.appendChild(script);
+        }
+
+        function buildLockPayload() {
+            const locks = {};
+
+            for (const uKey in defaultCurriculum) {
+                locks[uKey] = {
+                    isLocked: defaultCurriculum[uKey].isLocked,
+                    lessons: {}
+                };
+
+                defaultCurriculum[uKey].lessons.forEach(l => {
+                    locks[uKey].lessons[l.id] = l.isLocked;
+                });
+            }
+
+            return locks;
+        }
+
+        // 관리자 잠금 상태를 중앙 저장소에 저장
+        function saveLocksToCloud() {
+            if (!isAdminMode || !adminKey) {
+                alert("관리자 인증 정보가 없습니다. 관리자 모드에 다시 로그인해주세요.");
+                return;
+            }
+
+            const dataToSave = {
+                type: 'save_locks',
+                adminKey: adminKey,
+                locks: buildLockPayload()
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(dataToSave)
+            })
+            .then(() => {
+                // no-cors에서는 응답 본문을 읽을 수 없으므로,
+                // 잠시 뒤 중앙값을 다시 읽어 실제 저장 상태와 화면을 맞춥니다.
+                setTimeout(() => {
+                    loadLocksFromCloud(() => renderCurrentView());
+                }, 1000);
+            })
+            .catch(() => {
+                alert("잠금 상태 저장 요청에 실패했습니다. 인터넷 연결을 확인해주세요.");
+                loadLocksFromCloud(() => renderCurrentView());
+            });
+        }
+
+        // 관리자 비밀번호는 index.html에 저장하지 않고 Apps Script에서 검증합니다.
+        function verifyAdminKey(key, callback) {
+            const callbackName = 'adminVerify_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+            const script = document.createElement('script');
+            let finished = false;
+
+            const cleanup = () => {
+                if (finished) return;
+                finished = true;
+                try { delete window[callbackName]; } catch (e) {}
+                script.remove();
+            };
+
+            const timer = setTimeout(() => {
+                cleanup();
+                callback(false);
+            }, 8000);
+
+            window[callbackName] = function(data) {
+                clearTimeout(timer);
+                const ok = !!(data && data.ok === true);
+                cleanup();
+                callback(ok);
+            };
+
+            script.onerror = function() {
+                clearTimeout(timer);
+                cleanup();
+                callback(false);
+            };
+
+            script.src =
+                `${GOOGLE_SCRIPT_URL}?action=verify_admin&callback=${encodeURIComponent(callbackName)}&key=${encodeURIComponent(key)}&_=${Date.now()}`;
+
+            document.body.appendChild(script);
+        }
+
+        // 비밀번호 입력 모달 로직
+        function openAuthModal(title, desc) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc;
+
+            const input = document.getElementById('modalPwInput');
+            input.value = '';
+            input.type = 'password';
+            document.getElementById('pwToggleBtn').innerText = '👁️';
+
+            document.getElementById('passwordModal').style.display = 'flex';
+            setTimeout(() => input.focus(), 50);
+        }
+
+        function closeAuthModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+        }
+
+        function togglePasswordVisibility() {
+            const input = document.getElementById('modalPwInput');
+            const btn = document.getElementById('pwToggleBtn');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerText = '🙈';
+            } else {
+                input.type = 'password';
+                btn.innerText = '👁️';
+            }
+        }
+
+        function submitAuthModal() {
+            const input = document.getElementById('modalPwInput');
+            const inputVal = input.value.trim();
+
+            if (!inputVal) {
+                alert("관리자 비밀번호를 입력해주세요.");
+                input.focus();
+                return;
+            }
+
+            document.getElementById('modalDesc').innerText = "관리자 인증 정보를 확인하고 있습니다...";
+
+            verifyAdminKey(inputVal, (ok) => {
+                if (ok) {
+                    adminKey = inputVal;
+                    closeAuthModal();
+                    toggleAdminMode(true);
+                    alert("🔓 관리자 인증에 성공했습니다. 이제 대단원과 차시 잠금을 변경할 수 있습니다.");
+                } else {
+                    adminKey = "";
+                    document.getElementById('modalDesc').innerText = "비밀번호가 올바르지 않거나 인증 서버에 연결할 수 없습니다.";
+                    alert("❌ 관리자 인증에 실패했습니다.");
+                    input.value = '';
+                    input.focus();
+                }
+            });
+        }
+
+        document.getElementById('modalPwInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submitAuthModal();
+            if (e.key === 'Escape') closeAuthModal();
+        });
+
+        // 관리자 인증 요청
+        function requestAdminAuth() {
+            if (isAdminMode) {
+                toggleAdminMode(false);
+                return;
+            }
+
+            openAuthModal(
+                "🔑 교사용 관리자 모드",
+                "Apps Script에 등록된 관리자 비밀번호를 입력해주세요."
+            );
+        }
+
+        function toggleAdminMode(state) {
+            isAdminMode = state;
+
+            if (!state) {
+                adminKey = "";
+            }
+
+            document.getElementById('adminModeBanner').style.display = state ? 'block' : 'none';
+            document.getElementById('adminToggleFooterBtn').innerText = state ? '🔒 관리자 모드 끄기' : '⚙️ 교사용 관리자 모드';
+            renderCurrentView();
+        }
+
+        function toggleUnitLock(unitKey, e) {
+            e.stopPropagation();
+
+            if (!isAdminMode) return;
+
+            defaultCurriculum[unitKey].isLocked = !defaultCurriculum[unitKey].isLocked;
+            renderUnitHub();
+            saveLocksToCloud();
+        }
+
+        function toggleLessonLock(lessonId, e) {
+            e.stopPropagation();
+
+            if (!isAdminMode) return;
+
+            const unit = defaultCurriculum[currentUnitKey];
+            const lesson = unit.lessons.find(l => l.id === lessonId);
+
+            if (lesson) {
+                lesson.isLocked = !lesson.isLocked;
+                renderLessonCards(unit);
+                saveLocksToCloud();
+            }
+        }
+
+        function renderUnitHub() {
+            const grid = document.getElementById('unitEntryGrid');
+            grid.innerHTML = '';
+
+            for (const [key, unit] of Object.entries(defaultCurriculum)) {
+                const card = document.createElement('div');
+                const isLocked = unit.isLocked;
+                card.className = `unit-entry-card ${unit.themeClass} ${isLocked ? 'is-locked' : ''}`;
+
+                const badgeHtml = isLocked 
+                    ? `<span class="unit-entry-badge badge-locked">🔒 잠김 (비공개)</span>`
+                    : `<span class="unit-entry-badge ${unit.badgeClass}">${unit.title.split('.')[0]} · ${unit.lessons.length}개 차시</span>`;
+
+                const btnText = isLocked ? `🔒 잠김 (학습 불가)` : `${unit.icon} ${unit.title} 학습관 입장하기 ➔`;
+
+                const adminToggleHtml = isAdminMode ? `
+                    <div class="admin-toggle-bar" style="display:flex;">
+                        <span style="font-size:0.85rem; color:#cbd5e1;">단원 공개 상태: <b>${isLocked ? '🔒 잠김' : '🔓 공개중'}</b></span>
+                        <button class="admin-toggle-btn ${isLocked ? 'toggle-unlock-btn' : 'toggle-lock-btn'}" onclick="toggleUnitLock('${key}', event)">
+                            ${isLocked ? '🔓 잠금 풀기' : '🔒 단원 잠그기'}
+                        </button>
+                    </div>
+                ` : '';
+
+                card.innerHTML = `
+                    <div>
+                        <div class="unit-entry-header">
+                            ${badgeHtml}
+                            <div class="unit-entry-icon">${unit.icon}</div>
+                        </div>
+                        <h2 class="unit-entry-title">${unit.title}</h2>
+                        <p class="unit-entry-desc">${unit.desc}</p>
+                    </div>
+                    <div>
+                        <button class="unit-entry-btn">${btnText}</button>
+                        ${adminToggleHtml}
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    if (isAdminMode) {
+                        enterUnit(key);
+                        return;
+                    }
+
+                    // 학생이 누르는 순간 중앙 잠금 상태를 다시 확인
+                    loadLocksFromCloud((ok) => {
+                        renderUnitHub();
+
+                        if (!ok) {
+                            alert("🔒 현재 학습 공개 상태를 확인할 수 없어 안전을 위해 접속을 제한합니다.");
+                            return;
+                        }
+
+                        if (defaultCurriculum[key].isLocked) {
+                            alert("🔒 아직 공개되지 않은 단원입니다.");
+                            return;
+                        }
+
+                        enterUnit(key);
+                    });
+                };
+
+                grid.appendChild(card);
+            }
+        }
+
+        function renderLessonCards(unit) {
+            const container = document.getElementById('lessonCardContainer');
+            container.innerHTML = '';
+
+            unit.lessons.forEach(l => {
+                const card = document.createElement('div');
+                const isLocked = l.isLocked;
+                card.className = `lesson-card ${unit.cardClass} ${isLocked ? 'is-locked' : ''}`;
+
+                const tagElements = l.tags.map(t => `<span class="tag">${t}</span>`).join('');
+                const badgeHtml = isLocked 
+                    ? `<span class="card-badge badge-locked">🔒 잠김</span>`
+                    : `<span class="card-badge ${unit.badgeClass}">${unit.title.split('.')[0]} ${l.chasi}</span>`;
+
+                const btnHtml = isLocked
+                    ? `<button class="launch-btn btn-locked">🔒 수업 준비 중 (잠김)</button>`
+                    : `<button class="launch-btn ${unit.btnClass}">${l.chasi} 학습 시작하기 ➔</button>`;
+
+                const adminToggleHtml = isAdminMode ? `
+                    <div class="admin-toggle-bar" style="display:flex;">
+                        <span style="font-size:0.83rem; color:#cbd5e1;">차시 상태: <b>${isLocked ? '🔒 잠김' : '🔓 공개'}</b></span>
+                        <button class="admin-toggle-btn ${isLocked ? 'toggle-unlock-btn' : 'toggle-lock-btn'}" onclick="toggleLessonLock('${l.id}', event)">
+                            ${isLocked ? '🔓 차시 풀기' : '🔒 차시 잠그기'}
+                        </button>
+                    </div>
+                ` : '';
+
+                card.innerHTML = `
+                    <div>
+                        <div class="card-header">
+                            ${badgeHtml}
+                            <div class="lesson-icon">${isLocked ? '🔒' : unit.icon}</div>
+                        </div>
+                        <h2 class="lesson-title">${l.title}</h2>
+                        <p class="lesson-desc">${l.desc}</p>
+                        <div class="feature-tags">${tagElements}</div>
+                    </div>
+                    <div>
+                        ${btnHtml}
+                        ${adminToggleHtml}
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    if (isAdminMode) {
+                        window.location.href = l.file;
+                        return;
+                    }
+
+                    const unitKeyAtClick = currentUnitKey;
+                    const lessonIdAtClick = l.id;
+
+                    // 학생이 누르는 순간 중앙 잠금 상태를 다시 확인
+                    loadLocksFromCloud((ok) => {
+                        const latestUnit = defaultCurriculum[unitKeyAtClick];
+                        renderLessonCards(latestUnit);
+
+                        if (!ok) {
+                            alert("🔒 현재 학습 공개 상태를 확인할 수 없어 안전을 위해 접속을 제한합니다.");
+                            return;
+                        }
+
+                        // 대단원 자체가 잠겼거나 해당 차시가 잠기면 모두 접속 차단
+                        const latestLesson = latestUnit.lessons.find(item => item.id === lessonIdAtClick);
+
+                        if (latestUnit.isLocked || !latestLesson || latestLesson.isLocked) {
+                            alert("🔒 아직 공개되지 않은 학습입니다.");
+                            backToHub();
+                            return;
+                        }
+
+                        window.location.href = latestLesson.file;
+                    });
+                };
+
+                container.appendChild(card);
+            });
+        }
+
+        function enterUnit(unitKey) {
+            const unit = defaultCurriculum[unitKey];
+            if (!unit) return;
+
+            if (unit.isLocked && !isAdminMode) {
+                alert("🔒 아직 공개되지 않은 단원입니다.");
+                return;
+            }
+
+            currentUnitKey = unitKey;
+
+            document.getElementById('unitHubView').style.display = 'none';
+            document.getElementById('lessonView').style.display = 'block';
+
+            document.getElementById('headerMainTitle').innerText = `${unit.icon} ${unit.title} 학습관`;
+            document.getElementById('headerSubTitle').innerText = `${unit.title}의 차시별 인터랙티브 학습 프로그램 목록입니다.`;
+
+            const navBar = document.getElementById('unitNavBar');
+            navBar.className = `unit-navigation-bar ${unit.barThemeClass || ''}`;
+            document.getElementById('unitStatusText').innerHTML = `<span class="${unit.statusClass}">현재 학습관: ${unit.title} (총 ${unit.lessons.length}개 차시)</span>`;
+
+            const banner = document.getElementById('unitBannerBox');
+            banner.className = `unit-banner ${unit.bannerClass}`;
+            document.getElementById('unitBannerTitle').innerText = `📖 ${unit.title} 탐구 안내`;
+            document.getElementById('unitBannerDesc').innerText = unit.desc;
+
+            renderLessonCards(unit);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function backToHub() {
+            currentUnitKey = null;
+            document.getElementById('unitHubView').style.display = 'block';
+            document.getElementById('lessonView').style.display = 'none';
+            document.getElementById('headerMainTitle').innerText = '🔬 중2 과학 디지털 탐구 포털';
+            document.getElementById('headerSubTitle').innerText = '학습할 단원을 선택하면 해당 단원의 탐구 활동들만 집중해서 학습할 수 있습니다.';
+            renderUnitHub();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderCurrentView() {
+            if (currentUnitKey) {
+                renderLessonCards(defaultCurriculum[currentUnitKey]);
+            } else {
+                renderUnitHub();
+            }
+        }
+
+        // 초기 구동: 중앙(Apps Script) 잠금 상태만 사용
+        loadLocksFromCloud((ok) => {
+            if (!ok) {
+                console.warn("중앙 잠금 상태를 불러오지 못해 전체 잠금 상태로 시작합니다.");
+            }
+            renderUnitHub();
+        });
+    </script>
+</body>
+</html>
